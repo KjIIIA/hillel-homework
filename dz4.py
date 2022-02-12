@@ -1,6 +1,7 @@
 import requests
 import string
 import random
+from html import escape
 from flask import Flask, request
 
 app = Flask(__name__)
@@ -18,10 +19,12 @@ def whoami():
 
 @app.route('/source_code')
 def source_code():
-    q2 = request.remote_addr
-    resp = requests.get(f'http://{q2}:8080/source_code')
-    print(resp.text)
-    return 'TEXT-TEXT-TEXT-TEXT-TEXT-TEXT-TEXT-TEXT-TEXT-TEXT'
+    with open(__file__, 'r') as f:
+        file = f.readlines()
+    code = escape("".join(file))
+    print(code)
+
+    return f'<pre>{code}</pre>'
 
 
 @app.route('/random/<int:length>/<int:specials>/<int:digits>')
@@ -40,3 +43,4 @@ def random_url(length, specials, digits):
 
 
 app.run(host="0.0.0.0", port=8080, debug=True)
+
